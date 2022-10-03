@@ -14,7 +14,7 @@ Similar to my other project, [WorldBoss Announcer](https://github.com/infernuxmo
 
 After getting the OCR Space Api Key and a Discord webhook, you should be able to run the script by right-clicking and selecting "Run with Powershell".
 
-![](QueueChecker.png)
+![](https://github.com/infernuxmonster/QueueChecker/blob/main/QueueChecker.PNG?raw=true)
 
 ## Common errors
 
