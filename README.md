@@ -9,6 +9,8 @@ Similar to my other project, [WorldBoss Announcer](https://github.com/infernuxmo
 1. [OCR Space API Key](https://ocr.space/ocrapi/freekey)
 2. [Your own Discord server webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
 3. Powershell
+4. World of Warcraft must be running on your main screen
+5. World of Warcraft must be foreground and fullscreen
 
 ## Running the script
 
