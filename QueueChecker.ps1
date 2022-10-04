@@ -206,10 +206,10 @@ $window.Add_Loaded({
 
 $var_QueueChecker.Add_Click( {
     if($var_API_KEY_INPUT -and $var_WEBHOOK_INPUT) {
+        # sleep 10 minutes default
+        $SleepTimer = 600
+        $var_Feedback_Label.Content = "Current status: Monitoring Queue";Update-Gui
         do {
-            # sleep 10 minutes default
-            $SleepTimer = 600
-            $var_Feedback_Label.Content = "Current status: Monitoring Queue";Update-Gui
             # get text from queue
             $text = QueueChecker -APIKEY $var_API_KEY_INPUT.Text
             # set realm
@@ -224,22 +224,26 @@ $var_QueueChecker.Add_Click( {
                 if($positionInQueue.Length -gt 6) {
                     $positionInQueue = $positionInQueue.Split("`r`n")
                 }
-                Write-Host "Position in queue: $positionInQueue"
 
                 ## Check estimated time left
                 $textIndex = $text.Split(" ").IndexOf("time:")
                 $estimatedTime = $text.Split(" ")[$textIndex+1]
-                Write-Host "Time left: $estimatedTime min"
                 $time = (Get-Date).AddMinutes($estimatedTime).ToString("HH:mm")
-                $logFile = "C:\QueueChecker\log.txt"
+                $logFile = "C:\QueueChecker\$(Get-Date -Format ddMMyy)_log.txt"
 
                 # if less than 15 minutes, webhook
-                if($estimatedTime -le "15") {
-                    $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm (around $time)"
+                if([int]$estimatedTime -le 15) {
+                    if($15minutewarning) {
+                        $content = "**QueueChecker** -- $estimatedTime remaining until login ready on $realm (around $time)"
+                    } else {
+                        $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm (around $time)"
+                        $15minutewarning = $true
+                    }
                     # sleep 59 seconds after 15 minutes
                     $SleepTimer = 59
                     # if less than 1 min, queueover
-                    if($estimatedTime -le "1") {
+                    if([int]$estimatedTime -le 1) {
+                        $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm (around $time)"
                         $QueueOver = $true
                     }
                 } else {
@@ -249,7 +253,10 @@ $var_QueueChecker.Add_Click( {
                 Send-DiscordWebhook -WEBHOOK $var_WEBHOOK_INPUT.Text -content $content
 
                 # send info to logfile
-                Add-Content $logfile $content
+                Write-Host "Position in queue: $positionInQueue"
+                Write-Host "Time left: $estimatedTime min"
+                $data = "TIME: $(Get-Date -format HH:mm), POS: $positionInQueue, TIMELEFT: $estimatedTime minutes, ETA: $time"
+                Add-Content $logfile $data
 
                 # if queue over, don't sleep
                 if(!$QueueOver) {
