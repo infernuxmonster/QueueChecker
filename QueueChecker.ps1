@@ -1,5 +1,4 @@
 # QueueChecker for WOTLK Classic
-# Modepush <Evig nedtur> @ Gehennas
 
 #############
 # FUNCTIONS #
@@ -231,10 +230,12 @@ $var_QueueChecker.Add_Click( {
                 $textIndex = $text.Split(" ").IndexOf("time:")
                 $estimatedTime = $text.Split(" ")[$textIndex+1]
                 Write-Host "Time left: $estimatedTime min"
-                
+                $time = (Get-Date).AddMinutes($estimatedTime).ToString("HH:mm")
+                $logFile = "C:\QueueChecker\log.txt"
+
                 # if less than 15 minutes, webhook
                 if($estimatedTime -le "15") {
-                    $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm"
+                    $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm (around $time)"
                     # sleep 59 seconds after 15 minutes
                     $SleepTimer = 59
                     # if less than 1 min, queueover
@@ -242,10 +243,13 @@ $var_QueueChecker.Add_Click( {
                         $QueueOver = $true
                     }
                 } else {
-                    $content = "**QueueChecker** -- $estimatedTime minutes remaining until login ready on $realm"
+                    $content = "**QueueChecker** -- $estimatedTime minutes remaining until login ready on $realm (around $time)"
                 }
                 # send info to the discord
                 Send-DiscordWebhook -WEBHOOK $var_WEBHOOK_INPUT.Text -content $content
+
+                # send info to logfile
+                Add-Content $logfile $content
 
                 # if queue over, don't sleep
                 if(!$QueueOver) {
