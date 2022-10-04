@@ -1,4 +1,5 @@
 # QueueChecker for WOTLK Classic
+# Modepush <Evig nedtur> @ Gehennas
 
 #############
 # FUNCTIONS #
@@ -232,7 +233,7 @@ $var_QueueChecker.Add_Click( {
                 $logFile = "C:\QueueChecker\$(Get-Date -Format ddMMyy)_log.txt"
 
                 # if less than 15 minutes, webhook
-                if([int]$estimatedTime -le 15) {
+                if($estimatedTime -le 15) {
                     if($15minutewarning) {
                         $content = "**QueueChecker** -- $estimatedTime remaining until login ready on $realm (around $time)"
                     } else {
@@ -242,7 +243,7 @@ $var_QueueChecker.Add_Click( {
                     # sleep 59 seconds after 15 minutes
                     $SleepTimer = 59
                     # if less than 1 min, queueover
-                    if([int]$estimatedTime -le 1) {
+                    if($estimatedTime -le 1) {
                         $content = "**QueueChecker** -- @everyone -- $estimatedTime remaining until login ready on $realm (around $time)"
                         $QueueOver = $true
                     }
